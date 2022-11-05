@@ -1,0 +1,25 @@
+name: EconManager
+version: '${project.version}'
+main: net.solarmc.econmanager.EconManager
+api-version: 1.18
+authors: [ GargatheOro ]
+description: Economy mainframe for SolarMC
+website: www.solarmc.net
+depend: [Vault]
+commands:
+  econ:
+    aliases: [ ECON ]
+    description: The root of the economy commands
+  bank:
+    aliases: [ BANK ]
+    description: The root of the bank commands
+  pay:
+    aliases: [ PAY ]
+    permission: econ.player.pay
+    description: Transfers funds from the sender's wallet to the target's wallet
+    usage: /pay targetUsername amount
+  wallet:
+    aliases: [ WALLET, BAL, bal ]
+    permission: econ.player.wallet
+    description: Checks the wallet balance of a player
+    usage: /wallet target
