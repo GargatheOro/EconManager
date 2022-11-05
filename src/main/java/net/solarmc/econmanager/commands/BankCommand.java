@@ -148,8 +148,9 @@ public class BankCommand implements CommandExecutor {
                             double amount = Double.parseDouble(args[2]);
                             if (player.hasPermission("econ.bank.wire")) {
                                 Player target = Bukkit.getPlayer(args[3]);
-                                if (target != null) {
-                                    Main.wireMoney(player, target, amount);
+                                Player giver = Bukkit.getPlayer(args[1]);
+                                if (target != null && giver != null) {
+                                    Main.wireMoney(giver, target, amount);
                                 } else {
                                     player.sendMessage(Main.badArgs);
                                 }
@@ -181,34 +182,140 @@ public class BankCommand implements CommandExecutor {
         } else { //TERMINAL USAGE
             if (args.length >= 1) {
                 switch (args[0].toLowerCase()) {
-                    case "mint":
-                    case "unmint":
-                        System.out.println(Main.prefix + ChatColor.RED + " This command only operates when used by a player");
-                        break;
-                    case "stats": //Retrieves economic statistics such as GDP and GINI
-
-                        break;
-                    case "reload": //Reloads the plugin
-                        if (args.length == 1) {
-                            Main.reloadPlugin();
+                    case "open": //Opens a new bank account -- /bank open accountType initialDeposit player
+                        if (args.length == 4 && Main.checkArgForDouble(args[2])) {
+                            double amount = Double.parseDouble(args[2]);
+                            Player target = Bukkit.getPlayer(args[3]);
+                            if ((target != null)) {
+                                if (args[1].equalsIgnoreCase("checking")) {
+                                    Main.openChecking(target, amount);
+                                } else if (args[1].equalsIgnoreCase("savings")) {
+                                    Main.openSavings(target, amount);
+                                } else {
+                                    System.out.println(Main.prefix + ChatColor.RED + " Please specify a bank account type (checking or savings).");
+                                }
+                            } else {
+                                System.out.println(Main.badArgs);
+                            }
+                        } else {
+                            System.out.println(Main.improperArgs);
                         }
                         break;
-                    case "player": //Modifies player balance externally
+                    case "deposit": //Deposits money from a wallet into a bank account -- /bank deposit accountType amount player
+                        if (args.length == 4 && Main.checkArgForDouble(args[2])) {
+                            double amount = Double.parseDouble(args[2]);
+                            Player target = Bukkit.getPlayer(args[3]);
+                            if (target != null) {
+                                if (args[1].equalsIgnoreCase("checking")) {
+                                    Main.depositChecking(target, amount);
+                                } else if (args[1].equalsIgnoreCase("savings")) {
+                                    Main.depositSavings(target, amount);
+                                } else {
+                                    System.out.println(Main.prefix + ChatColor.RED + " Please specify a bank account type (checking or savings).");
+                                }
+                            } else {
+                                System.out.println(Main.badArgs);
+                            }
+                        } else {
+                            System.out.println(Main.improperArgs);
+                        }
+                        break;
+                    case "withdraw": //Withdraws money from a bank account to a wallet -- /bank withdraw accountType amount player
+                        if (args.length == 4 && Main.checkArgForDouble(args[2])) {
+                            double amount = Double.parseDouble(args[2]);
+                            Player target = Bukkit.getPlayer(args[3]);
+                            if (target != null) {
+                                if (args[1].equalsIgnoreCase("checking")) {
+                                    Main.withdrawChecking(target, amount);
+                                } else if (args[1].equalsIgnoreCase("savings")) {
+                                    Main.withdrawSavings(target, amount);
+                                } else {
+                                    System.out.println(Main.prefix + ChatColor.RED + " Please specify a bank account type (checking or savings).");
+                                }
+                            } else {
+                                System.out.println(Main.badArgs);
+                            }
+                        } else {
+                            System.out.println(Main.improperArgs);
+                        }
+                        break;
+                    case "transfer": //Transfers money from one's bank account to their other -- /bank transfer outputAccount amount
+                        System.out.println(Main.prefix + ChatColor.RED + " This command must be ran by a player.");
+                        break;
+                    case "player": //Admin banking root
                         if (args.length >= 2) {
+                            Player target = Bukkit.getPlayer(args[2]);
                             switch (args[1].toLowerCase()) {
-                                case "list": //Displays all players who have a balance, and ranks them by (bank balance, personal balance)
-                                    System.out.println("S");
+                                case "clearfunds": //Sets all of a player's accounts to 0 (if positive) -- /bank player clearfunds target
+                                    if (args.length == 3 && (target != null)) {
+                                        Main.clearFunds(target);
+                                    } else {
+                                        System.out.println(Main.badArgs);
+                                    }
                                     break;
-                                case "give":
-                                    System.out.println("R");
+                                case "addfunds": //Adds funds to a given player's given account (can include wallet) -- /bank player addfunds target accountType amount
+                                    if (args.length == 5 && (target != null) && Main.checkArgForDouble(args[4])) {
+                                        double amount = Double.parseDouble(args[4]);
+                                        if (args[3].equalsIgnoreCase("checking")) {
+                                            Main.addFundsChecking(target, amount);
+                                        } else if (args[3].equalsIgnoreCase("savings")) {
+                                            Main.addFundsSavings(target, amount);
+                                        } else {
+                                            System.out.println(Main.badArgs);
+                                        }
+                                    } else {
+                                        System.out.println(Main.badArgs);
+                                    }
                                     break;
-                                case "take":
-                                    System.out.println("T");
+                                case "removefunds": //Removes funds to a given player's given account (can include wallet) -- /bank player removefunds target accountType amount
+                                    if (args.length == 5 && (target != null) && Main.checkArgForDouble(args[4])) {
+                                        double amount = Double.parseDouble(args[4]);
+                                        if (args[3].equalsIgnoreCase("checking")) {
+                                            Main.removeFundsChecking(target, amount);
+                                        } else if (args[3].equalsIgnoreCase("savings")) {
+                                            Main.removeFundsSavings(target, amount);
+                                        } else {
+                                            System.out.println(Main.badArgs);
+                                        }
+                                    } else {
+                                        System.out.println(Main.badArgs);
+                                    }
                                     break;
                                 default:
+                                    System.out.println(Main.badArgs);
                             }
+                        } else {
+                            System.out.println(Main.improperArgs);
                         }
                         break;
+                    case "wire": //Wires money from a checking account to another user's checking account -- /bank wire sender amount recipient
+                        if (args.length == 4 && Main.checkArgForDouble(args[2])) {
+                            double amount = Double.parseDouble(args[2]);
+                            Player target = Bukkit.getPlayer(args[3]);
+                            Player giver = Bukkit.getPlayer(args[1]);
+                            if (target != null && giver != null) {
+                                Main.wireMoney(giver, target, amount);
+                            } else {
+                                System.out.println(Main.badArgs);
+                            }
+                        } else {
+                            System.out.println(Main.improperArgs);
+                        }
+                        break;
+                    case "info": //Retrieves account information about a player -- /bank info [player if applicable]
+                        if (args.length == 2) {
+                            Player target = Bukkit.getPlayer(args[1]);
+                            if ((target != null)) {
+                                Main.getAccountInformation(target);
+                            } else {
+                                System.out.println(Main.badArgs);
+                            }
+                        } else {
+                            System.out.println(Main.badArgs);
+                        }
+                        break;
+                    default:
+                        System.out.println(Main.badArgs);
                 }
             }
         }
