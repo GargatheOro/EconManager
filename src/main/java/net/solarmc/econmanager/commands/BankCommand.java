@@ -21,7 +21,7 @@ public class BankCommand implements CommandExecutor {
                             if (args.length == 4 && Main.checkArgForDouble(args[2])) {
                                 double amount = Double.parseDouble(args[2]);
                                 Player target = Bukkit.getPlayer(args[3]);
-                                if ((target != null) && (target instanceof Player)) {
+                                if ((target != null)) {
                                     if (args[1].equalsIgnoreCase("checking")) {
                                         Main.openChecking(target, amount);
                                     } else if (args[1].equalsIgnoreCase("savings")) {
@@ -44,7 +44,7 @@ public class BankCommand implements CommandExecutor {
                             if (args.length == 4 && Main.checkArgForDouble(args[2])) {
                                 double amount = Double.parseDouble(args[2]);
                                 Player target = Bukkit.getPlayer(args[3]);
-                                if (target != null && target instanceof Player) {
+                                if (target != null) {
                                     if (args[1].equalsIgnoreCase("checking")) {
                                         Main.depositChecking(target, amount);
                                     } else if (args[1].equalsIgnoreCase("savings")) {
@@ -67,7 +67,7 @@ public class BankCommand implements CommandExecutor {
                             if (args.length == 4 && Main.checkArgForDouble(args[2])) {
                                 double amount = Double.parseDouble(args[2]);
                                 Player target = Bukkit.getPlayer(args[3]);
-                                if (target != null && target instanceof Player) {
+                                if (target != null) {
                                     if (args[1].equalsIgnoreCase("checking")) {
                                         Main.withdrawChecking(target, amount);
                                     } else if (args[1].equalsIgnoreCase("savings")) {
@@ -102,7 +102,7 @@ public class BankCommand implements CommandExecutor {
                             Player target = Bukkit.getPlayer(args[2]);
                             switch (args[1].toLowerCase()) {
                                 case "clearfunds": //Sets all of a player's accounts to 0 (if positive)
-                                    if (args.length == 3 && (target != null) && (target instanceof Player)) {
+                                    if (args.length == 3 && (target != null)) {
 
                                     } else {
                                         player.sendMessage(Main.badArgs);
@@ -129,7 +129,7 @@ public class BankCommand implements CommandExecutor {
                             double amount = Double.parseDouble(args[2]);
                             if (player.hasPermission("econ.bank.wire")) {
                                 Player target = Bukkit.getPlayer(args[3]);
-                                if (target != null && target instanceof Player) {
+                                if (target != null) {
                                     Main.wireMoney(player, target, amount);
                                 } else {
                                     player.sendMessage(Main.badArgs);
@@ -143,8 +143,8 @@ public class BankCommand implements CommandExecutor {
                         break;
                     case "info": //Retrieves account information about a player -- /bank info [player if applicable]
                         if (args.length == 2 && player.hasPermission("econ.bank.info.others")) {
-                            Player target = Bukkit.getPlayer(args[3]);
-                            if ((target != null) && (target instanceof Player)) {
+                            Player target = Bukkit.getPlayer(args[1]);
+                            if ((target != null)) {
                                 Main.getAccountInformation(target);
                             } else {
                                 player.sendMessage(Main.badArgs);
