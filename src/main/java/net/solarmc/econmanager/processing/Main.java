@@ -25,7 +25,7 @@ public final class Main extends JavaPlugin {
 
     public static boolean checkArgForDouble(String argument) {
         try {
-            double amount = Double.parseDouble(argument);
+            Double.parseDouble(argument);
             return true;
         } catch (NumberFormatException exception) {
             return false;
