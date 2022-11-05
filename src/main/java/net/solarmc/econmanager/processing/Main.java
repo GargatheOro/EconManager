@@ -13,6 +13,7 @@ public final class Main extends JavaPlugin {
     public static final String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "Economy" + ChatColor.DARK_GRAY + "]";
     public static final String improperArgs = prefix + ChatColor.RED + " Check your arguments again. You are either missing or exceeding required components.";
     public static final String badArgs = prefix + ChatColor.RED + " Check your arguments again. One or more of your arguments has an error.";
+    public static final String noPermission = prefix + ChatColor.RED + " You do not have permission to execute this command.";
 
     @Override
     public void onEnable() {
@@ -41,6 +42,34 @@ public final class Main extends JavaPlugin {
     }
 
     public static void getAccountInformation(Player target) {
+
+    }
+
+    public static void transferCheckingToSavings(double amount) {
+
+    }
+
+    public static void transferSavingsToChecking(double amount) {
+
+    }
+
+    public static void wireMoney(Player sender, Player recipient, double amount) {
+
+    }
+
+    public static void depositChecking(Player accountHolder, double amount) {
+
+    }
+
+    public static void depositSavings(Player accountHolder, double amount) {
+
+    }
+
+    public static void withdrawChecking(Player accountHolder, double amount) {
+
+    }
+
+    public static void withdrawSavings(Player accountHolder, double amount) {
 
     }
 }

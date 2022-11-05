@@ -27,7 +27,7 @@ public class BankCommand implements CommandExecutor {
                                     } else if (args[1].equalsIgnoreCase("savings")) {
                                         Main.openSavings(target, amount);
                                     } else {
-                                        System.out.println(Main.prefix + ChatColor.RED + " Please specify a bank account type (checking or savings).");
+                                        player.sendMessage(Main.prefix + ChatColor.RED + " Please specify a bank account type (checking or savings).");
                                     }
                                 } else {
                                     player.sendMessage(Main.badArgs);
@@ -36,25 +36,53 @@ public class BankCommand implements CommandExecutor {
                                 player.sendMessage(Main.improperArgs);
                             }
                         } else {
-                            System.out.println(Main.prefix + ChatColor.RED + " You must use a teller at the bank to open an account.");
+                            player.sendMessage(Main.prefix + ChatColor.RED + " You must use a teller at the bank to open an account.");
                         }
                         break;
-                    case "deposit": //Deposits money from a wallet into a bank account -- /bank deposit accountType amount
+                    case "deposit": //Deposits money from a wallet into a bank account -- /bank deposit accountType amount player
                         if (player.hasPermission("econ.bank.deposit") || player.hasPermission("econ.bank.teller")) {
-                            if (args.length == 3 && Main.checkArgForDouble(args[2])) {
+                            if (args.length == 4 && Main.checkArgForDouble(args[2])) {
                                 double amount = Double.parseDouble(args[2]);
+                                Player target = Bukkit.getPlayer(args[3]);
+                                if (target != null && target instanceof Player) {
+                                    if (args[1].equalsIgnoreCase("checking")) {
+                                        Main.depositChecking(target, amount);
+                                    } else if (args[1].equalsIgnoreCase("savings")) {
+                                        Main.depositSavings(target, amount);
+                                    } else {
+                                        player.sendMessage(Main.prefix + ChatColor.RED + " Please specify a bank account type (checking or savings).");
+                                    }
+                                } else {
+                                    player.sendMessage(Main.badArgs);
+                                }
+                            } else {
+                                player.sendMessage(Main.improperArgs);
                             }
                         } else {
-                            System.out.println(Main.prefix + ChatColor.RED + " You must use a teller at the bank to deposit funds.");
+                            player.sendMessage(Main.prefix + ChatColor.RED + " You must use a teller at the bank to deposit funds.");
                         }
                         break;
-                    case "withdraw": //Withdraws money from a bank account to a wallet -- /bank withdraw accountType amount
+                    case "withdraw": //Withdraws money from a bank account to a wallet -- /bank withdraw accountType amount player
                         if (player.hasPermission("econ.bank.withdraw") || player.hasPermission("econ.bank.teller")) {
-                            if (args.length == 3 && Main.checkArgForDouble(args[2])) {
+                            if (args.length == 4 && Main.checkArgForDouble(args[2])) {
                                 double amount = Double.parseDouble(args[2]);
+                                Player target = Bukkit.getPlayer(args[3]);
+                                if (target != null && target instanceof Player) {
+                                    if (args[1].equalsIgnoreCase("checking")) {
+                                        Main.withdrawChecking(target, amount);
+                                    } else if (args[1].equalsIgnoreCase("savings")) {
+                                        Main.withdrawSavings(target, amount);
+                                    } else {
+                                        player.sendMessage(Main.prefix + ChatColor.RED + " Please specify a bank account type (checking or savings).");
+                                    }
+                                } else {
+                                    player.sendMessage(Main.badArgs);
+                                }
+                            } else {
+                                player.sendMessage(Main.improperArgs);
                             }
                         } else {
-                            System.out.println(Main.prefix + ChatColor.RED + " You must use a teller at the bank to withdraw funds.");
+                            player.sendMessage(Main.prefix + ChatColor.RED + " You must use a teller at the bank to deposit funds.");
                         }
                         break;
                     case "transfer": //Transfers money from one's bank account to their other -- /bank transfer outputAccount amount
@@ -62,21 +90,23 @@ public class BankCommand implements CommandExecutor {
                             double amount = Double.parseDouble(args[2]);
                             if (player.hasPermission("econ.bank.transfer") || player.hasPermission("econ.bank.teller")) {
                                 if (args[1].equalsIgnoreCase("checking")) {
-                                    //SavingsAccount.transferSavingsToChecking(amount);
+                                    Main.transferSavingsToChecking(amount);
                                 } else if (args[1].equalsIgnoreCase("savings")) {
-                                    //CheckingAccount.transferCheckingToSavings(amount);
+                                    Main.transferCheckingToSavings(amount);
                                 }
                             }
                         }
                         break;
                     case "player": //Admin banking root
-                        if (args.length >= 2) {
-                            //CHECK FOR PERMISSION
+                        if (args.length >= 2 && player.hasPermission("econ.bank.player")) {
+                            Player target = Bukkit.getPlayer(args[2]);
                             switch (args[1].toLowerCase()) {
                                 case "clearfunds": //Sets all of a player's accounts to 0 (if positive)
-                                    //if (args.length == 3 && args[2].toLowerCase() == Player) {
+                                    if (args.length == 3 && (target != null) && (target instanceof Player)) {
 
-                                    //}
+                                    } else {
+                                        player.sendMessage(Main.badArgs);
+                                    }
                                     break;
                                 case "addfunds": //Adds funds to a given player's given account (can include wallet)
                                     System.out.println("R");
@@ -87,15 +117,28 @@ public class BankCommand implements CommandExecutor {
                                 case "display": //Displays a given player's balance in all three accounts, if applicable
                                     System.out.println("W");
                                     break;
+                                default:
+                                    player.sendMessage(Main.badArgs);
                             }
+                        } else {
+                            player.sendMessage(Main.improperArgs + ChatColor.GRAY + " OR" + ChatColor.RED + " You do not have permission to execute this command.");
                         }
                         break;
-                    case "wire": //Wires money from a checking account to another user's checking account
-                        if (args.length == 3) {
-                            //CHECK FOR PERMISSION
-                            switch (args[1].toLowerCase()) {
-
+                    case "wire": //Wires money from a checking account to another user's checking account -- /bank wire sender amount recipient
+                        if (args.length == 4 && Main.checkArgForDouble(args[2])) {
+                            double amount = Double.parseDouble(args[2]);
+                            if (player.hasPermission("econ.bank.wire")) {
+                                Player target = Bukkit.getPlayer(args[3]);
+                                if (target != null && target instanceof Player) {
+                                    Main.wireMoney(player, target, amount);
+                                } else {
+                                    player.sendMessage(Main.badArgs);
+                                }
+                            } else {
+                                player.sendMessage(Main.noPermission);
                             }
+                        } else {
+                            player.sendMessage(Main.improperArgs);
                         }
                         break;
                     case "info": //Retrieves account information about a player -- /bank info [player if applicable]
@@ -103,13 +146,17 @@ public class BankCommand implements CommandExecutor {
                             Player target = Bukkit.getPlayer(args[3]);
                             if ((target != null) && (target instanceof Player)) {
                                 Main.getAccountInformation(target);
+                            } else {
+                                player.sendMessage(Main.badArgs);
                             }
-                        } else if (args.length == 1 && player.hasPermission("econ.bank.info")) {
+                        } else if (args.length == 1) {
                             Main.getAccountInformation(player);
                         } else {
-                            player.sendMessage(Main.improperArgs);
+                            player.sendMessage(Main.badArgs);
                         }
                         break;
+                    default:
+                        player.sendMessage(Main.badArgs);
                 }
             }
         } else { //TERMINAL USAGE
