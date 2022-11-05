@@ -23,6 +23,7 @@ public final class Main extends JavaPlugin {
         getCommand("wallet").setExecutor(new WalletCommand());
     }
 
+    //Checks a command input to ensure it is a double
     public static boolean checkArgForDouble(String argument) {
         try {
             Double.parseDouble(argument);
@@ -32,10 +33,17 @@ public final class Main extends JavaPlugin {
         }
     }
 
+    //Reloads the plugin config
+    public static void reloadPlugin() {
+
+    }
+
+    //Opens a new checking account for the given player with initial amount (min deposit controlled by config)
     public static void openChecking(Player accountHolder, double initialDeposit) {
 
         accountHolder.sendMessage(ChatColor.GREEN + " Your account has been created successfully.");
     }
+
 
     public static void openSavings(Player accountHolder, double initialDeposit) {
 
@@ -70,6 +78,26 @@ public final class Main extends JavaPlugin {
     }
 
     public static void withdrawSavings(Player accountHolder, double amount) {
+
+    }
+
+    public static void addFundsChecking(Player accountHolder, double amount) {
+
+    }
+
+    public static void removeFundsChecking(Player accountHolder, double amount) {
+
+    }
+
+    public static void addFundsSavings(Player accountHolder, double amount) {
+
+    }
+
+    public static void removeFundsSavings(Player accountHolder, double amount) {
+
+    }
+
+    public static void clearFunds(Player accountHolder) {
 
     }
 }

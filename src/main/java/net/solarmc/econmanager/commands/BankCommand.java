@@ -101,21 +101,40 @@ public class BankCommand implements CommandExecutor {
                         if (args.length >= 2 && player.hasPermission("econ.bank.player")) {
                             Player target = Bukkit.getPlayer(args[2]);
                             switch (args[1].toLowerCase()) {
-                                case "clearfunds": //Sets all of a player's accounts to 0 (if positive)
+                                case "clearfunds": //Sets all of a player's accounts to 0 (if positive) -- /bank player clearfunds target
                                     if (args.length == 3 && (target != null)) {
-
+                                        Main.clearFunds(target);
                                     } else {
                                         player.sendMessage(Main.badArgs);
                                     }
                                     break;
-                                case "addfunds": //Adds funds to a given player's given account (can include wallet)
-                                    System.out.println("R");
+                                case "addfunds": //Adds funds to a given player's given account (can include wallet) -- /bank player addfunds target accountType amount
+                                    if (args.length == 5 && (target != null) && Main.checkArgForDouble(args[4])) {
+                                        double amount = Double.parseDouble(args[4]);
+                                        if (args[3].equalsIgnoreCase("checking")) {
+                                            Main.addFundsChecking(target, amount);
+                                        } else if (args[3].equalsIgnoreCase("savings")) {
+                                            Main.addFundsSavings(target, amount);
+                                        } else {
+                                            player.sendMessage(Main.badArgs);
+                                        }
+                                    } else {
+                                        player.sendMessage(Main.badArgs);
+                                    }
                                     break;
-                                case "removefunds": //Removes funds to a given player's given account (can include wallet)
-                                    System.out.println("T");
-                                    break;
-                                case "display": //Displays a given player's balance in all three accounts, if applicable
-                                    System.out.println("W");
+                                case "removefunds": //Removes funds to a given player's given account (can include wallet) -- /bank player removefunds target accountType amount
+                                    if (args.length == 5 && (target != null) && Main.checkArgForDouble(args[4])) {
+                                        double amount = Double.parseDouble(args[4]);
+                                        if (args[3].equalsIgnoreCase("checking")) {
+                                            Main.removeFundsChecking(target, amount);
+                                        } else if (args[3].equalsIgnoreCase("savings")) {
+                                            Main.removeFundsSavings(target, amount);
+                                        } else {
+                                            player.sendMessage(Main.badArgs);
+                                        }
+                                    } else {
+                                        player.sendMessage(Main.badArgs);
+                                    }
                                     break;
                                 default:
                                     player.sendMessage(Main.badArgs);
@@ -142,7 +161,7 @@ public class BankCommand implements CommandExecutor {
                         }
                         break;
                     case "info": //Retrieves account information about a player -- /bank info [player if applicable]
-                        if (args.length == 2 && player.hasPermission("econ.bank.info.others")) {
+                        if (args.length == 2 && (player.hasPermission("econ.bank.info.others") || player.hasPermission("econ.bank.teller"))) {
                             Player target = Bukkit.getPlayer(args[1]);
                             if ((target != null)) {
                                 Main.getAccountInformation(target);
@@ -170,7 +189,9 @@ public class BankCommand implements CommandExecutor {
 
                         break;
                     case "reload": //Reloads the plugin
-
+                        if (args.length == 1) {
+                            Main.reloadPlugin();
+                        }
                         break;
                     case "player": //Modifies player balance externally
                         if (args.length >= 2) {
